@@ -4,24 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"regexp"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 )
-
-type config struct {
-	Token     string `env:"BOT_TOKEN"`
-	ChannelID string `env:"CHANNEL_ID"`
-}
-
-// ToDo: emoji と漢字が混合した文字列は除外できない
-func containsTargetCharacters(s string) bool {
-	// emoji 単体は除外する
-	emojireg := regexp.MustCompile(`^<:[^:>]+:[0-9]+>$`)
-	re := regexp.MustCompile(`[a-zA-Z0-9ァ-ヶぁ-ん]`)
-	return re.MatchString(s) && !emojireg.MatchString(s)
-}
 
 func main() {
 	err := godotenv.Load()
@@ -51,10 +37,12 @@ func main() {
 		}
 
 		if m.ChannelID == cid {
-			fmt.Println("Message received at ", cid, ": ", m.Content)
-			if containsTargetCharacters(m.Content) {
+			// fmt.Println("Message received at ", cid, ": ", m.Content)
+			if !IsAllowedCharacter(m.Content) {
+				// fmt.Println("検知対象: ", m.Content)
 				s.ChannelMessageSend(m.ChannelID, "🤖 不正入国者検知!")
 			} else {
+				// fmt.Println("検知対象外: ", m.Content)
 				return
 			}
 		}
