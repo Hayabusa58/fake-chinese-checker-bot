@@ -25,7 +25,7 @@ func main() {
 
 	// onLogin event handler
 	session.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		fmt.Println("Logged in as %s", r.User.String())
+		fmt.Printf("Logged in as %s", r.User.String())
 	})
 
 	// onMessageCreate event handler
@@ -38,7 +38,7 @@ func main() {
 
 		if m.ChannelID == cid {
 			// fmt.Println("Message received at ", cid, ": ", m.Content)
-			if !IsAllowedCharacter(m.Content) {
+			if !IsAllowedString(m.Content) {
 				// fmt.Println("検知対象: ", m.Content)
 				s.ChannelMessageSend(m.ChannelID, "🤖 不正入国者検知!")
 			} else {
